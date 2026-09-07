@@ -39,7 +39,9 @@ EXPOSE 9000
 
 # YouTube exige login desde IPs de centro de datos y responde
 # error.api.youtube.login. Cobalt se lo salta con cookies, que lee del archivo
-# indicado en COOKIE_PATH. En Railway no hay forma de subir un archivo al
+# indicado en COOKIE_PATH. Se escribe en /tmp y no en /app porque /app
+# pertenece a root y cobalt corre como usuario node.
+# En Railway no hay forma de subir un archivo al
 # contenedor, asi que se escribe al arrancar desde COOKIES_B64 (el cookies.json
 # de cobalt codificado en base64). Sin esa variable, arranca igual y sin cookies.
-CMD ["sh", "-c", "if [ -n \"$COOKIES_B64\" ]; then echo \"$COOKIES_B64\" | base64 -d > /app/cookies.json && echo '[cookies] cookies.json escrito desde COOKIES_B64'; else echo '[cookies] COOKIES_B64 no definida, sin cookies'; fi; exec node src/cobalt"]
+CMD ["sh", "-c", "if [ -n \"$COOKIES_B64\" ]; then echo \"$COOKIES_B64\" | base64 -d > /tmp/cookies.json && echo '[cookies] cookies.json escrito desde COOKIES_B64'; else echo '[cookies] COOKIES_B64 no definida, sin cookies'; fi; exec node src/cobalt"]
